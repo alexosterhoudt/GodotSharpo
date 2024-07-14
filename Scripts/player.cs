@@ -6,6 +6,7 @@ public partial class player : CharacterBody2D
 
 	const float SPEED = 300f;
 	public AnimatedSprite2D animatedSprite;
+	bool isAttacking = false;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -36,18 +37,22 @@ public partial class player : CharacterBody2D
 			animatedSprite.FlipH = true;
 		}
 
-		if(direction == 0)
+		if(isAttacking == false)
 		{
-			animatedSprite.Play("Idle");
-		}
-		else
-		{
-			animatedSprite.Play("Run");
+
+			if(direction == 0)
+			{
+				animatedSprite.Play("Idle");
+			}
+			else
+			{
+				animatedSprite.Play("Run");
+			}
 		}
 
-		if(Input.IsActionPressed("attack", false))
+		if(isAttacking)
 		{
-			animatedSprite.Play("Attack");
+			Velocity = direction * Vector2.Zero;
 		}
 
 		if(direction != 0)
@@ -62,4 +67,24 @@ public partial class player : CharacterBody2D
 
 	}
 
+	public override void _Input(InputEvent @event)
+	{
+		if(Input.IsActionJustPressed("attack"))
+		{
+			isAttacking = true;
+			Velocity = Vector2.Zero;
+			
+			animatedSprite.Play("Attack");
+		}
+		base._Input(@event);
+	}
+
+	private void _on_animated_sprite_2d_animation_finished()
+	{
+		isAttacking = false;
+	}
+
 }
+
+
+
