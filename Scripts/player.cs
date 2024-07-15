@@ -7,6 +7,11 @@ public partial class player : CharacterBody2D
 	const float SPEED = 300f;
 	public AnimatedSprite2D animatedSprite;
 	bool isAttacking = false;
+	[Export]
+	public int JumpImpulse {get; set;} = 20;
+	[Export]
+	public int FallAccel{get; set;} = 75;
+	private Vector2 targetVelocity = Vector2.Zero;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -26,7 +31,6 @@ public partial class player : CharacterBody2D
 		}
 
 		var direction = Input.GetAxis("move_left", "move_right");
-		var pos = Velocity.X + direction;
 
 		if(direction > 0)
 		{
@@ -50,21 +54,38 @@ public partial class player : CharacterBody2D
 			}
 		}
 
+	}
+	
+	public override void _PhysicsProcess(double delta)
+	{
+		var direction = Input.GetAxis("move_left", "move_right");
+		
 		if(isAttacking)
 		{
-			Velocity = direction * Vector2.Zero;
+			targetVelocity = Vector2.Zero;
 		}
 
 		if(direction != 0)
 		{
-			Velocity = new Vector2(direction, 0) * SPEED;
+			targetVelocity = new Vector2(direction, 0) * SPEED;
 		}
 		else
 		{
-			Velocity = Vector2.Zero;
+			targetVelocity = Vector2.Zero;
 		}
+		
+		if(!IsOnFloor())
+		{
+			targetVelocity.Y += FallAccel * (float)delta;
+		}
+		
+		if(IsOnFloor() && Input.IsActionJustPressed("move_up"))
+		{
+			targetVelocity.Y = JumpImpulse;
+			GD.Print("Jumping");
+		}
+		Velocity = targetVelocity;
 		MoveAndSlide();
-
 	}
 
 	public override void _Input(InputEvent @event)

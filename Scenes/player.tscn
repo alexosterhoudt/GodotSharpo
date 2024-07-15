@@ -106,7 +106,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"Attack",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -170,7 +170,10 @@ animations = [{
 
 [node name="Player" type="CharacterBody2D"]
 scale = Vector2(4, 4)
+collision_mask = 6
 script = ExtResource("1_fag41")
+JumpImpulse = -5000
+FallAccel = 9700
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_8rdox")
