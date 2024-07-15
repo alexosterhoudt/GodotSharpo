@@ -8,9 +8,9 @@ public partial class player : CharacterBody2D
 	public AnimatedSprite2D animatedSprite;
 	bool isAttacking = false;
 	[Export]
-	public int JumpImpulse {get; set;} = 20;
+	public int JumpImpulse {get; set;} = -400;
 	[Export]
-	public int FallAccel{get; set;} = 75;
+	public float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
 	private Vector2 targetVelocity = Vector2.Zero;
 
 	// Called when the node enters the scene tree for the first time.
@@ -18,12 +18,10 @@ public partial class player : CharacterBody2D
 	{
 		animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	
+	public override void _PhysicsProcess(double delta)
 	{
-
-
+		
 		if(Input.IsKeyPressed(Key.Escape))
 		{
 			GetTree().Quit();
@@ -44,48 +42,42 @@ public partial class player : CharacterBody2D
 		if(isAttacking == false)
 		{
 
-			if(direction == 0)
+			if(direction == 0 && IsOnFloor())
 			{
 				animatedSprite.Play("Idle");
 			}
-			else
+			else if(direction != 0 && IsOnFloor())
 			{
 				animatedSprite.Play("Run");
 			}
+			else if(!IsOnFloor())
+			{
+				animatedSprite.Play("Jump");
+			}
 		}
-
-	}
-	
-	public override void _PhysicsProcess(double delta)
-	{
-		var direction = Input.GetAxis("move_left", "move_right");
 		
-		if(isAttacking)
+		if(isAttacking && IsOnFloor())
 		{
-			targetVelocity = Vector2.Zero;
+			targetVelocity.X = 0;
 		}
 
-		if(direction != 0)
-		{
-			targetVelocity = new Vector2(direction, 0) * SPEED;
-		}
-		else
-		{
-			targetVelocity = Vector2.Zero;
-		}
+		targetVelocity.X = direction * SPEED;
 		
 		if(!IsOnFloor())
 		{
-			targetVelocity.Y += FallAccel * (float)delta;
+			targetVelocity.Y += Gravity * (float)delta;
 		}
 		
-		if(IsOnFloor() && Input.IsActionJustPressed("move_up"))
-		{
-			targetVelocity.Y = JumpImpulse;
-			GD.Print("Jumping");
-		}
+		horizontal_movement();
 		Velocity = targetVelocity;
 		MoveAndSlide();
+	}
+
+	public void horizontal_movement()
+	{
+		var input = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
+		
+		targetVelocity.X = input * SPEED;
 	}
 
 	public override void _Input(InputEvent @event)
@@ -96,6 +88,10 @@ public partial class player : CharacterBody2D
 			Velocity = Vector2.Zero;
 			
 			animatedSprite.Play("Attack");
+		}
+		if(IsOnFloor() && Input.IsActionJustPressed("move_up"))
+		{
+			targetVelocity.Y = JumpImpulse;
 		}
 		base._Input(@event);
 	}

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://cwvbk40v82dw1"]
+[gd_scene load_steps=22 format=3 uid="uid://cwvbk40v82dw1"]
 
 [ext_resource type="Script" path="res://Scripts/player.cs" id="1_fag41"]
 [ext_resource type="Texture2D" uid="uid://cgd3ep4pepmnf" path="res://Assets/adventurer-v1.5-Sheet.png" id="2_gyqgd"]
@@ -43,21 +43,9 @@ region = Rect2(100, 0, 50, 37)
 atlas = ExtResource("2_gyqgd")
 region = Rect2(150, 0, 50, 37)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mapp6"]
-atlas = ExtResource("2_gyqgd")
-region = Rect2(0, 74, 50, 37)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8ag8k"]
-atlas = ExtResource("2_gyqgd")
-region = Rect2(50, 74, 50, 37)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_encif"]
 atlas = ExtResource("2_gyqgd")
 region = Rect2(100, 74, 50, 37)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pt2y0"]
-atlas = ExtResource("2_gyqgd")
-region = Rect2(150, 74, 50, 37)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5832v"]
 atlas = ExtResource("2_gyqgd")
@@ -127,20 +115,11 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_mapp6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8ag8k")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_encif")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pt2y0")
 }],
-"loop": true,
+"loop": false,
 "name": &"Jump",
-"speed": 4.0
+"speed": 1.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -172,12 +151,11 @@ animations = [{
 scale = Vector2(4, 4)
 collision_mask = 6
 script = ExtResource("1_fag41")
-JumpImpulse = -5000
-FallAccel = 9700
+JumpImpulse = -600
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_8rdox")
-animation = &"Attack"
+animation = &"Jump"
 offset = Vector2(0, -18.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
